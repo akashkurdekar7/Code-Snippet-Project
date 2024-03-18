@@ -1,38 +1,59 @@
 import query from "../db.js";
 
-export const createAndUpdateUserController = async (req, res) => {
+// Create new user
+export const createUserController = async (req, res) => {
   try {
     const { username, code_language, stdin, source_code } = req.body;
-    const { id = 0 } = req.body;
-    const rows = await query("CALL usp_code_snippet_add_or_edit(?,?,?,?,?)", [
-      id,
-      username,
-      code_language,
-      stdin,
-      source_code,
-    ]);
+    const data = await query(
+      "INSERT INTO code_snippets (username, code_language, stdin, source_code) VALUES (?, ?, ?, ?)",
+      [username, code_language, stdin, source_code]
+    );
     res.status(200).send({
       success: true,
-      message: "user created or updated successfully",
-      rows,
+      message: "New user created successfully",
+      data,
     });
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "error in create and update controller",
+      message: "Error in create user controller",
       error: error,
     });
   }
 };
 
-export const allUserController = async (req, res) => {
+// Update existing user
+export const updateUserController = async (req, res) => {
   try {
-    const [rows, rowsCount] = await Promise.all([
+    const { username, code_language, stdin, source_code } = req.body;
+    const { id } = req.params;
+    const data = await query(
+      "UPDATE code_snippets SET username = ?, code_language = ?, stdin = ?, source_code = ? WHERE id = ?",
+      [username, code_language, stdin, source_code, id]
+    );
+    res.status(200).send({
+      success: true,
+      message: `User with id ${id} updated successfully`,
+      data,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error in update user controller",
+      error: error,
+    });
+  }
+};
+
+// Get all users Details
+export const getAllUserController = async (req, res) => {
+  try {
+    const [data, dataCount] = await Promise.all([
       query("SELECT * FROM users.code_snippets"),
       query("SELECT COUNT(*) AS userCount FROM users.code_snippets"),
     ]);
-    // if (rows.length === 0) {
-    if (!rows) {
+    // if (data.length === 0) {
+    if (!data) {
       res.status(404).send({
         message: "Not Found: no User Registered",
         success: false,
@@ -41,8 +62,8 @@ export const allUserController = async (req, res) => {
       res.status(200).send({
         message: "got all the user",
         success: true,
-        rows,
-        rowsCount,
+        data,
+        dataCount,
       });
     }
   } catch (error) {
@@ -53,12 +74,12 @@ export const allUserController = async (req, res) => {
     });
   }
 };
-
+// Get Single user Details
 export const singleUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await query(`SELECT * FROM code_snippets WHERE id = ${id}`);
-    if (!rows) {
+    const [data] = await query(`SELECT * FROM code_snippets WHERE id = ${id}`);
+    if (!data) {
       res.status(404).send({
         message: "Not Found: User does not exist",
         success: false,
@@ -67,7 +88,7 @@ export const singleUserController = async (req, res) => {
       res.status(200).send({
         message: "got the single user",
         success: true,
-        rows,
+        data,
       });
     }
   } catch (error) {
@@ -78,12 +99,12 @@ export const singleUserController = async (req, res) => {
     });
   }
 };
-
+// delete single user Details
 export const deleteUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    const rows = await query(`DELETE FROM code_snippets WHERE id = ${id}`);
-    if (rows.affectedRows === 0) {
+    const data = await query(`DELETE FROM code_snippets WHERE id = ${id}`);
+    if (data.affecteddata === 0) {
       res.status(404).send({
         message: `Not Found: User with id: ${id} does not exist `,
         success: false,
@@ -92,7 +113,7 @@ export const deleteUserController = async (req, res) => {
       res.status(200).send({
         message: `Deleted the user with id: ${id}`,
         success: true,
-        rows,
+        data,
       });
     }
   } catch (error) {
