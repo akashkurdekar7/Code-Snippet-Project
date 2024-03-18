@@ -5,7 +5,6 @@ import Layout from "../components/Layout/Layout";
 import { toast } from "react-hot-toast";
 
 const Home = () => {
-  const [user, setUser] = useState([]);
   const [formData, setFormData] = useState({
     username: "",
     code_language: "",
@@ -13,6 +12,7 @@ const Home = () => {
     source_code: "",
   });
   const [codeSnippets, setCodeSnippets] = useState([]);
+  const [updateSnippet, setUpdateSnippet] = useState(null);
 
   // get Users
   const getAllUsers = async () => {
@@ -20,7 +20,6 @@ const Home = () => {
       const { data } = await axios.get(`http://localhost:4000/api/users`);
       // console.log("data: ", data);
       if (data?.success) {
-        setUser(data?.data);
         setCodeSnippets(data?.data);
       }
     } catch (error) {
@@ -38,19 +37,91 @@ const Home = () => {
     e.preventDefault();
     try {
       const { username, code_language, stdin, source_code } = formData;
-      const res = await axios.post(`http://localhost:4000/api/users/create`, {
-        username,
-        code_language,
-        stdin,
-        source_code,
-      });
-      if (res && res.data && res.data.success) {
-        toast.success("User saved successfully");
+
+      // Check if creating a new user and validate form fields
+      if (!updateSnippet) {
+        switch (true) {
+          case !username:
+            toast.error("Please enter a username");
+            return;
+          case !code_language:
+            toast.error("Please select a code language");
+            return;
+          case !stdin:
+            toast.error("Please enter standard input");
+            return;
+          case !source_code:
+            toast.error("Please enter source code");
+            return;
+          default:
+            break;
+        }
+      }
+
+      // Proceed with form submission
+      if (updateSnippet) {
+        const res = await axios.put(
+          `http://localhost:4000/api/users/update/${updateSnippet.id}`,
+          {
+            username,
+            code_language,
+            stdin,
+            source_code,
+          }
+        );
+        if (res && res.data && res.data.success) {
+          toast.success("User updated successfully");
+          getAllUsers();
+          setFormData({
+            username: "",
+            code_language: "",
+            stdin: "",
+            source_code: "",
+          });
+          setUpdateSnippet(null);
+        } else {
+          toast.error(res?.data?.message || "Failed to update user");
+        }
       } else {
-        toast.error(res?.data?.message || "Failed to save user");
+        const res = await axios.post(`http://localhost:4000/api/users/create`, {
+          username,
+          code_language,
+          stdin,
+          source_code,
+        });
+        if (res && res.data && res.data.success) {
+          toast.success("User saved successfully");
+          getAllUsers();
+          setFormData({
+            username: "",
+            code_language: "",
+            stdin: "",
+            source_code: "",
+          });
+        } else {
+          toast.error(res?.data?.message || "Failed to save user");
+        }
       }
     } catch (error) {
       toast.error("Creating User failed");
+    }
+  };
+
+  // handle delete
+  const handleDelete = async (id) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:4000/api/users/delete/${id}`
+      );
+      console.log("Deleted succesfullty", res);
+      if (res && res.data && res.data.success) {
+        toast.success("User deleted successfully");
+        getAllUsers();
+      } else {
+        toast.error(res?.data?.message || "Failed to delete user");
+      }
+    } catch (error) {
+      toast.error("Failed to delete snippet");
     }
   };
 
@@ -59,13 +130,23 @@ const Home = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleUpdate = async () => {};
-  const handleDelete = async () => {};
+  const handleUpdateClick = (id) => {
+    const snippetToUpdate = codeSnippets.find((snippet) => snippet.id === id);
+    setFormData({
+      username: snippetToUpdate.username,
+      code_language: snippetToUpdate.code_language,
+      stdin: snippetToUpdate.stdin,
+      source_code: snippetToUpdate.source_code,
+    });
+    setUpdateSnippet(snippetToUpdate);
+  };
   return (
     <Layout>
       <Row>
         <Col md={4}>
-          <h2>Submit Code Snippet</h2>
+          <h2>
+            {updateSnippet ? "Update Code Snippet" : "Submit Code Snippet"}
+          </h2>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="username">
               <Form.Label>Username</Form.Label>
@@ -82,8 +163,8 @@ const Home = () => {
               <Form.Label>Code Language</Form.Label>
               <Form.Control
                 as="select"
-                name="codeLanguage"
-                value={formData.codeLanguage}
+                name="code_language"
+                value={formData.code_language}
                 onChange={handleInputChange}
               >
                 <option>Choose...</option>
@@ -110,14 +191,14 @@ const Home = () => {
               <Form.Control
                 as="textarea"
                 rows={3}
-                name="sourceCode"
-                value={formData.sourceCode}
+                name="source_code"
+                value={formData.source_code}
                 onChange={handleInputChange}
               />
             </Form.Group>
 
             <Button variant="primary" type="submit">
-              Submit
+              {updateSnippet ? "Update" : "Submit"}
             </Button>
           </Form>
         </Col>
@@ -146,7 +227,7 @@ const Home = () => {
                   <td>
                     <Button
                       variant="info"
-                      onClick={() => handleUpdate(snippet.id)}
+                      onClick={() => handleUpdateClick(snippet.id)}
                     >
                       Update
                     </Button>
