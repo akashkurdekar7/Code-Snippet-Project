@@ -44,7 +44,7 @@ const Home = () => {
           case !username:
             toast.error("Please enter a username");
             return;
-          case !code_language:
+          case !code_language || code_language === "0":
             toast.error("Please select a code language");
             return;
           case !stdin:
@@ -167,11 +167,11 @@ const Home = () => {
                 value={formData.code_language}
                 onChange={handleInputChange}
               >
-                <option>Choose...</option>
-                <option>C++</option>
-                <option>Java</option>
-                <option>JavaScript</option>
-                <option>Python</option>
+                <option value="">Choose...</option>
+                <option value="C++">C++</option>
+                <option value="Java">Java</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="Python">Python</option>
               </Form.Control>
             </Form.Group>
 
