@@ -1,11 +1,12 @@
 import React from "react";
-import { Toaster } from "react-hot-toast";
+import { Container } from "react-bootstrap";
 import Header from "./Header";
 
-const Layout = () => {
+const Layout = ({ children }) => {
   return (
     <div>
       <Header />
+      <Container className="mt-4">{children}</Container>
     </div>
   );
 };
