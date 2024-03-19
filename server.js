@@ -14,8 +14,7 @@ app.use((err, req, res, next) => {
   console.log(colors.red("Error: " + err.message));
   res.status(err.status || 500).send({
     success: false,
-    message: "Something Went Wrong",
-    err,
+    message: err.message || "Something Went Wrong",
   });
 });
 

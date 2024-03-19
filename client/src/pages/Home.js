@@ -13,6 +13,19 @@ const Home = () => {
   });
   const [codeSnippets, setCodeSnippets] = useState([]);
   const [updateSnippet, setUpdateSnippet] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage] = useState(10);
+
+  // Get code snippets for the current page
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = codeSnippets.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(codeSnippets.length / entriesPerPage);
 
   // get Users
   const getAllUsers = async () => {
@@ -72,13 +85,7 @@ const Home = () => {
         if (res && res.data && res.data.success) {
           toast.success("User updated successfully");
           getAllUsers();
-          setFormData({
-            username: "",
-            code_language: "",
-            stdin: "",
-            source_code: "",
-          });
-          setUpdateSnippet(null);
+          resetForm();
         } else {
           toast.error(res?.data?.message || "Failed to update user");
         }
@@ -92,12 +99,7 @@ const Home = () => {
         if (res && res.data && res.data.success) {
           toast.success("User saved successfully");
           getAllUsers();
-          setFormData({
-            username: "",
-            code_language: "",
-            stdin: "",
-            source_code: "",
-          });
+          resetForm();
         } else {
           toast.error(res?.data?.message || "Failed to save user");
         }
@@ -113,7 +115,6 @@ const Home = () => {
       const res = await axios.delete(
         `http://localhost:4000/api/users/delete/${id}`
       );
-      console.log("Deleted succesfullty", res);
       if (res && res.data && res.data.success) {
         toast.success("User deleted successfully");
         getAllUsers();
@@ -140,10 +141,25 @@ const Home = () => {
     });
     setUpdateSnippet(snippetToUpdate);
   };
+
+  // Reset form fields
+  const resetForm = () => {
+    setFormData({
+      username: "",
+      code_language: "",
+      stdin: "",
+      source_code: "",
+    });
+    setUpdateSnippet(null);
+  };
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <Layout>
       <Row>
-        <Col md={4}>
+        <Col md={3}>
           <h2>
             {updateSnippet ? "Update Code Snippet" : "Submit Code Snippet"}
           </h2>
@@ -197,12 +213,13 @@ const Home = () => {
               />
             </Form.Group>
 
-            <Button variant="primary" type="submit">
+            <Button className="mt-3 mb-3 btn-dark text-white" type="submit">
               {updateSnippet ? "Update" : "Submit"}
             </Button>
           </Form>
         </Col>
-        <Col md={8}>
+
+        <Col md={9}>
           <h2>Code Snippets</h2>
           <Table striped bordered hover>
             <thead>
@@ -212,27 +229,28 @@ const Home = () => {
                 <th>Code Language</th>
                 <th>Standard Input</th>
                 <th>Source Code</th>
+                <th>Time Stamp</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {codeSnippets.map((snippet) => (
+              {currentEntries.map((snippet) => (
                 <tr key={snippet.id}>
                   <td>{snippet.id}</td>
                   <td>{snippet.username}</td>
                   <td>{snippet.code_language}</td>
                   <td>{snippet.stdin}</td>
-                  {/* <td>{snippet.sourceCode.substring(0, 100)}</td> */}
-                  <td>{snippet.source_code}</td>
+                  <td>{snippet.source_code.substring(0, 100)}...</td>
+                  <td>{snippet.timestamp}</td>
                   <td>
                     <Button
-                      variant="info"
+                      className="btn btn-warning btn-block mb-3"
                       onClick={() => handleUpdateClick(snippet.id)}
                     >
                       Update
                     </Button>
                     <Button
-                      variant="danger"
+                      className="btn btn-danger btn-block"
                       onClick={() => handleDelete(snippet.id)}
                     >
                       Delete
@@ -242,6 +260,19 @@ const Home = () => {
               ))}
             </tbody>
           </Table>
+          {/* Pagination */}
+          <ul className="pagination">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <li
+                key={i}
+                className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+              >
+                <button onClick={() => paginate(i + 1)} className="page-link">
+                  {i + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
         </Col>
       </Row>
     </Layout>
