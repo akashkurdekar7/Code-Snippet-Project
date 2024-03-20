@@ -7,7 +7,6 @@ import userRoute from "./routes/userRoute.js";
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 app.use("/api/users", userRoute);
 
 app.use((err, req, res, next) => {
