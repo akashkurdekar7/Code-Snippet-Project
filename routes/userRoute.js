@@ -21,7 +21,7 @@ router.put("/update/:id", updateUserController);
 // single user by ID
 router.get("/user/:id", singleUserController);
 
-// DELETE user by ID
+// delete user by ID
 router.delete("/delete/:id", deleteUserController);
 
 export default router;

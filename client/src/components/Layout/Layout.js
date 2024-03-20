@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
   return (
     <div>
       <Header />
-      <Container className="mt-4">
+      <Container className="mt-4 d-flex justify-content-center">
         <Toaster />
         {children}
       </Container>

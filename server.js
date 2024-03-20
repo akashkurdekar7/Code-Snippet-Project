@@ -10,6 +10,20 @@ app.use(express.json());
 
 app.use("/api/users", userRoute);
 
+app.post("/api/users/compile", async (req, res) => {
+  try {
+    const { code_language, source_code, stdin } = req.body;
+
+    // Run the code with the provided language and input
+    const output = await runCode(code_language, source_code, stdin);
+
+    res.status(200).json({ output });
+  } catch (error) {
+    console.error("Compilation error:", error);
+    res.status(500).json({ error: "Compilation failed" });
+  }
+});
+
 app.use((err, req, res, next) => {
   console.log(colors.red("Error: " + err.message));
   res.status(err.status || 500).send({
