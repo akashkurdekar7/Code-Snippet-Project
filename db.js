@@ -4,7 +4,7 @@ import { promisify } from "util";
 const mysqlPool = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "Admin123",
   database: "users",
 });
 

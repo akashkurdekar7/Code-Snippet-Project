@@ -5,7 +5,7 @@ export const createUserController = async (req, res) => {
   try {
     const { username, code_language, stdin, source_code } = req.body;
     const data = await query(
-      "INSERT INTO code_snippets (username, code_language, stdin, source_code) VALUES (?, ?, ?, ?)",
+      "INSERT INTO code_snippet (username, code_language, stdin, source_code) VALUES (?, ?, ?, ?)",
       [username, code_language, stdin, source_code]
     );
     res.status(200).send({
@@ -28,7 +28,7 @@ export const updateUserController = async (req, res) => {
     const { username, code_language, stdin, source_code } = req.body;
     const { id } = req.params;
     const data = await query(
-      "UPDATE code_snippets SET username = ?, code_language = ?, stdin = ?, source_code = ? WHERE id = ?",
+      "UPDATE code_snippet SET username = ?, code_language = ?, stdin = ?, source_code = ? WHERE id = ?",
       [username, code_language, stdin, source_code, id]
     );
     res.status(200).send({
@@ -49,8 +49,8 @@ export const updateUserController = async (req, res) => {
 export const getAllUserController = async (req, res) => {
   try {
     const [data, dataCount] = await Promise.all([
-      query("SELECT * FROM users.code_snippets"),
-      query("SELECT COUNT(*) AS userCount FROM users.code_snippets"),
+      query("SELECT * FROM users.code_snippet"),
+      query("SELECT COUNT(*) AS userCount FROM users.code_snippet"),
     ]);
     // if (data.length === 0) {
     if (!data) {
@@ -78,7 +78,7 @@ export const getAllUserController = async (req, res) => {
 export const singleUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    const [data] = await query(`SELECT * FROM code_snippets WHERE id = ${id}`);
+    const [data] = await query(`SELECT * FROM code_snippet WHERE id = ${id}`);
     if (!data) {
       res.status(404).send({
         message: "Not Found: User does not exist",
@@ -103,7 +103,7 @@ export const singleUserController = async (req, res) => {
 export const deleteUserController = async (req, res) => {
   try {
     const { id } = req.params;
-    const data = await query(`DELETE FROM code_snippets WHERE id = ${id}`);
+    const data = await query(`DELETE FROM code_snippet WHERE id = ${id}`);
     if (data.affecteddata === 0) {
       res.status(404).send({
         message: `Not Found: User with id: ${id} does not exist `,
