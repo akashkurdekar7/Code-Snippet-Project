@@ -1,12 +1,12 @@
 {
-  "name": "tuf-intern",
+  "name": "code-snippet-project",
   "version": "1.0.0",
   "main": "server.js",
   "keywords": [],
-  "author": "",
+  "author": "Akash Kurdekar",
   "license": "ISC",
   "type": "module",
-  "description": "",
+  "description": "A project for managing and displaying code snippets.",
   "dependencies": {
     "colors": "^1.4.0",
     "concurrently": "^8.2.2",

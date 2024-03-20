@@ -1,0 +1,8 @@
+SELECT 
+SELECT * FROM code_snippets;
+
+INSERT
+INSERT INTO code_snippets (username, code_language, stdin, source_code) VALUES (?, ?, ?, ?);
+
+DELETE
+DELETE FROM code_snippets WHERE id = ?;
