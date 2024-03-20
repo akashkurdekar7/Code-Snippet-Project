@@ -30,5 +30,5 @@ query("SELECT 1")
   .catch((err) => console.error("db connection failed:", err));
 
 app.get("/", (req, res) => {
-  res.send(`<h1>Welcome to the TUF INTERN TASK</h1>`);
+  res.send(`<h1>Welcome to the Code Snippets</h1>`);
 });
