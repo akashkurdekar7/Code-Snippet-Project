@@ -11,5 +11,4 @@ const mysqlPool = mysql.createPool({
 // Promisify the query method of mysqlPool
 const query = promisify(mysqlPool.query).bind(mysqlPool);
 
-
 export default query;
