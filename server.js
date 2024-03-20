@@ -18,7 +18,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 query("SELECT 1")
   .then((data) => {
     app.listen(PORT, () => {
