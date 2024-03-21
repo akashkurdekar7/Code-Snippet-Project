@@ -46,7 +46,7 @@ const FormComponent = ({ getAllUsers }) => {
 
       // Proceed with form submission
       const res = await axios.post(
-        `http://localhost:4000/api/v1/users/create`,
+        `${process.env.BASE_URL}/api/v1/users/create`,
         {
           username,
           code_language,
