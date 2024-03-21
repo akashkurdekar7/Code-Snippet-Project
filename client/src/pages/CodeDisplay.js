@@ -34,7 +34,7 @@ const CodeDisplay = () => {
   // get Users
   const getAllUsers = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:4000/api/users`);
+      const { data } = await axios.get(`http://localhost:4000/api/v1/users`);
       // console.log("data: ", data);
       if (data?.success) {
         setCodeSnippets(data?.data);
@@ -53,7 +53,7 @@ const CodeDisplay = () => {
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(
-        `http://localhost:4000/api/users/delete/${id}`
+        `http://localhost:4000/api/v1/users/delete/${id}`
       );
       if (res && res?.data && res?.data?.success) {
         toast.success("User deleted successfully");

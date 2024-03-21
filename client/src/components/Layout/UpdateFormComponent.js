@@ -25,7 +25,7 @@ const UpdateFormComponent = ({ snippet, getAllUsers, onClose }) => {
     try {
       const { username, code_language, stdin, source_code } = formData;
       const res = await axios.put(
-        `http://localhost:4000/api/users/update/${snippet.id}`,
+        `http://localhost:4000/api/v1/users/update/${snippet.id}`,
         {
           username,
           code_language,

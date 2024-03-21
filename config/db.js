@@ -10,8 +10,6 @@ const mysqlPool = mysql.createPool({
   database: process.env.DATABASE,
 });
 
-
-
 // Promisify the query method of mysqlPool
 const query = promisify(mysqlPool.query).bind(mysqlPool);
 

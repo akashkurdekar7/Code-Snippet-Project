@@ -45,7 +45,7 @@ const FormComponent = ({ getAllUsers }) => {
       }
 
       // Proceed with form submission
-      const res = await axios.post(`http://localhost:4000/api/users/create`, {
+      const res = await axios.post(`http://localhost:4000/api/v1/users/create`, {
         username,
         code_language,
         stdin,
