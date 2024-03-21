@@ -1,4 +1,4 @@
-import query from "../db.js";
+import query from "./../config/db.js";
 
 // Create new user
 export const createUserController = async (req, res) => {

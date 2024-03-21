@@ -1,9 +1,11 @@
 import express from "express";
 import colors from "colors";
 import cors from "cors";
-import query from "./db.js";
 import userRoute from "./routes/userRoute.js";
+import query from "./config/db.js";
+import { config } from "dotenv";
 
+config(".env");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -18,6 +20,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 4000;
+
 query("SELECT 1")
   .then((data) => {
     app.listen(PORT, () => {
