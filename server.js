@@ -19,7 +19,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5005;
 
 query("SELECT 1")
   .then((data) => {

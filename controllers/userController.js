@@ -49,8 +49,8 @@ export const updateUserController = async (req, res) => {
 export const getAllUserController = async (req, res) => {
   try {
     const [data, dataCount] = await Promise.all([
-      query("SELECT * FROM users.code_snippet"),
-      query("SELECT COUNT(*) AS userCount FROM users.code_snippet"),
+      query("SELECT * FROM code_snippet"),
+      query("SELECT COUNT(*) AS userCount FROM code_snippet"),
     ]);
     // if (data.length === 0) {
     if (!data) {
