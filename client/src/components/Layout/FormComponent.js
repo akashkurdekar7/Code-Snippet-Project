@@ -45,12 +45,15 @@ const FormComponent = ({ getAllUsers }) => {
       }
 
       // Proceed with form submission
-      const res = await axios.post(`http://localhost:4000/api/v1/users/create`, {
-        username,
-        code_language,
-        stdin,
-        source_code,
-      });
+      const res = await axios.post(
+        `http://localhost:4000/api/v1/users/create`,
+        {
+          username,
+          code_language,
+          stdin,
+          source_code,
+        }
+      );
       if (res && res?.data && res?.data?.success === true) {
         toast.success("User saved successfully");
         setTimeout(() => {
